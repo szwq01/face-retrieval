@@ -23,9 +23,10 @@ class User(BaseModel):
 
 class Library(BaseModel):
     name = CharField(unique=True)
-    path = CharField()
-    is_available = BooleanField()
-    libhash = TextField()
+    detail = TextField()
+    is_available = BooleanField(default=True)
+    libhash = CharField()
+    count = IntegerField(default=0)
 
     def get_photo(self, filename):
         pass
@@ -44,18 +45,17 @@ class Library(BaseModel):
 #     parameters = JSONField()
 
 class Distance(BaseModel):
-    name = CharField()
+    name = CharField(unique=True)
     detail = TextField()
-    filename = CharField()
-    filehash = TextField()
-    lib = ForeignKeyField(Library, backref='distances')
+    filehash = CharField()
+    library = ForeignKeyField(Library, backref='distances')
     is_available = BooleanField()
 
 
 class Retrieval(BaseModel):
     user = ForeignKeyField(User, backref='retrieves')
     remark = TextField()
-    lib = ForeignKeyField(Library, backref='retrieves')
+    library = ForeignKeyField(Library, backref='retrieves')
     distance = ForeignKeyField(Distance, backref='retrieves')
     strategy = CharField()
     max_round = IntegerField(default=8)

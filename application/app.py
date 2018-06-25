@@ -3,11 +3,15 @@ from .utils import db
 from .photos import Photos
 from .retrieves import Retrieves
 # from peewee import *
-from .models import create_tables
+from .models import create_tables, Library
+import os
 
 
-def init_photos():
-    pass
+def init_photo_libs():
+    lib_dir = '../data/photos'
+    libs = os.listdir(lib_dir)
+    for name in libs:
+        Library.get_or_create(path=lib_dir+)
 
 
 def init_features():
