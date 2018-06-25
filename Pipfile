@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.douban.com/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+falcon = "*"
+gunicorn = "*"
+peewee = "*"
+"psycopg2cffi" = "*"
+
+[dev-packages]
+pytest = "*"
+ipython = "*"
+"pep8" = "*"
+pylint = "*"
+httpie = "*"
+"autopep8" = "*"
+peewee-migrate = "*"
+
+[requires]
+python_version = "3.5"

@@ -1,2 +1,4 @@
-PROJ
 node_modules
+data
+.env
+.vscode
