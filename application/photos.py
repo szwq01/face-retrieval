@@ -1,23 +1,32 @@
 import json
-
+import os
 import falcon
+import mimetypes
+from . import const
 
 
-class Photos(object):
+class Collection(object):
 
-    def on_get(self, req, resp):
-        doc = {
-            'images': [
-                {
-                    'href': '/images/1eaf6ef1-7f2d-4ecc-a8d5-6e8adba7cc0e.png'
-                }
-            ]
-        }
+    def on_get(self, req, resp, library):
+        path = os.path.join(const.LIBRARY_PATH, library)
+        if not os.path.isdir(path):
+            resp.status = falcon.HTTP_404
+            return
 
-        # Create a JSON representation of the resource
+        photos = os.listdir(os.path.join(path, 'photos'))
+        doc = [
+            {'href': '/'.join(['photos', library, photo])} for photo in photos
+        ]
+
         resp.body = json.dumps(doc, ensure_ascii=False)
-
-        # The following line can be omitted because 200 is the default
-        # status returned by the framework, but it is included here to
-        # illustrate how this may be overridden as needed.
         resp.status = falcon.HTTP_200
+
+
+class Item(object):
+
+    def __init__(self, image_store):
+        self._image_store = image_store
+
+    def on_get(self, req, resp, library, name):
+        resp.content_type = mimetypes.guess_type(name)[0]
+        resp.stream, resp.stream_len = self._image_store.open(library, name)

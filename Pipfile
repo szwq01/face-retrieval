@@ -8,6 +8,7 @@ falcon = "*"
 gunicorn = "*"
 peewee = "*"
 "psycopg2cffi" = "*"
+falcon-jsonify = "*"
 
 [dev-packages]
 pytest = "*"

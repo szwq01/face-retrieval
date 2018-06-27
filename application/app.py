@@ -1,46 +1,104 @@
-import falcon
-from .utils import db
-from .photos import Photos
-from .retrieves import Retrieves
-# from peewee import *
-from .models import create_tables, Library
+import io
+import json
+import mimetypes
 import os
+import re
+import uuid
+
+import falcon
+import falcon_jsonify
+
+from . import const, iterations, libraries, photos, retrieves
+from .models import Distance, Library, User, create_tables
+from .utils import db
 
 
-def init_photo_libs():
-    lib_dir = '../data/photos'
+def refresh_libs():
+    lib_dir = const.LIBRARY_PATH
     libs = os.listdir(lib_dir)
-    for name in libs:
-        Library.get_or_create(path=lib_dir+)
-
-
-def init_features():
-    pass
-
-
-def init_distances():
-    pass
+    for lib_name in libs:
+        library, created = Library.get_or_create(name=lib_name)
+        photos = os.listdir(os.path.join(lib_dir, lib_name, 'photos'))
+        library.count = len(photos)
+        library.save()
+        distances = os.listdir(os.path.join(lib_dir, lib_name, 'distances'))
+        for distance_name in distances:
+            distance, created = Distance.get_or_create(
+                name=distance_name, library=library)
 
 
 def init_system():
-    pass
+    admin, created = User.get_or_create(username='admin',password='')
+
+
+create_tables()
+refresh_libs()
+init_system()
 
 
 class PeeweeConnectionMiddleware(object):
     def process_request(self, req, resp):
-        db.connect()
+        db.connect(reuse_if_open=True)
+        pass
 
     def process_response(self, req, resp, resource):
         if not db.is_closed():
             db.close()
+        pass
 
 
 api = application = falcon.API(middleware=[
-    PeeweeConnectionMiddleware(),
+    # PeeweeConnectionMiddleware(),
+    falcon_jsonify.Middleware(help_messages=True),
     # ... other middlewares ...
 ])
 
-photos = Photos()
-retrieves = Retrieves()
-api.add_route('/photos', photos)
-api.add_route('/retrieves', photos)
+
+class ImageStore(object):
+
+    _CHUNK_SIZE_BYTES = 4096
+    _IMAGE_NAME_PATTERN = re.compile(
+        '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.[a-z]{2,4}$'
+    )
+
+    def __init__(self, storage_path, uuidgen=uuid.uuid4, fopen=io.open):
+        self._storage_path = storage_path
+        self._uuidgen = uuidgen
+        self._fopen = fopen
+
+    def save(self, image_stream, image_content_type):
+        ext = mimetypes.guess_extension(image_content_type)
+        name = '{uuid}{ext}'.format(uuid=self._uuidgen(), ext=ext)
+        image_path = os.path.join(self._storage_path, name)
+
+        with self._fopen(image_path, 'wb') as image_file:
+            while True:
+                chunk = image_stream.read(self._CHUNK_SIZE_BYTES)
+                if not chunk:
+                    break
+
+                image_file.write(chunk)
+
+        return name
+
+    def open(self, library, name):
+        # Always validate untrusted input!
+        # if not self._IMAGE_NAME_PATTERN.match(name):
+        #     raise IOError('File not found')
+
+        image_path = os.path.join(self._storage_path, library, 'photos', name)
+        stream = self._fopen(image_path, 'rb')
+        stream_len = os.path.getsize(image_path)
+
+        return stream, stream_len
+
+
+image_store = ImageStore(const.LIBRARY_PATH)
+api.add_route('/libraries', libraries.Collection())
+api.add_route('/libraries/{name}', libraries.Item())
+api.add_route('/photos/{library}', photos.Collection())
+api.add_route('/photos/{library}/{name}', photos.Item(image_store))
+api.add_route('/retrieves', retrieves.Collection())
+api.add_route('/retrieves/{retrieval_id}', retrieves.Item())
+api.add_route('/retrieves/{retrieval_id}/iterations', iterations.Collection())
+api.add_route('/retrieves/{retrieval_id}/iterations/{no}', iterations.Item())
