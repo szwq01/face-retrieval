@@ -1,5 +1,33 @@
-import { stringify } from 'qs';
+import {
+  stringify
+} from 'qs';
 import request from '../utils/request';
+
+export async function createRetrieval(params) {
+  return request('/api/retrievals', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+
+export async function getRetrieval(id) {
+  return request(`/api/retrievals/${id}`);
+}
+
+export async function getIteration(id, no) {
+  return request(`/api/retrievals/${id}/iterations/${no}`);
+}
+
+export async function createIteration(id, no, selected) {
+  return request(`/api/retrievals/${id}/iterations/${no}`, {
+    method: 'POST',
+    body: {
+      'selected': selected,
+    },
+  });
+}
 
 export async function queryProjectNotice() {
   return request('/api/project/notice');

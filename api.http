@@ -47,9 +47,11 @@ Content-Type: {{contentType}}
 }
 
 ###
+
 # @name create_iteration
 POST {{host}}/retrieves/1/iterations
 Content-Type: {{contentType}}
+
 {
     "no": 0,
     "select": "0"
