@@ -17,6 +17,13 @@ Content-Type: {{contentType}}
 
 ###
 
+# @name distances
+GET {{host}}/distances/?libraryID={{libraryID}}
+
+###
+
+
+
 # @name libraries
 GET {{host}}/libraries
 

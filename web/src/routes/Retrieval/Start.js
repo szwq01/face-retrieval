@@ -39,7 +39,8 @@ export default class BasicForms extends PureComponent {
     });
   };
   render() {
-    const { submitting } = this.props;
+    const { submitting,retrieval } = this.props;
+    console.log(retrieval);
     const { getFieldDecorator, getFieldValue } = this.props.form;
 
     const formItemLayout = {

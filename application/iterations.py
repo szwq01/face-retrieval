@@ -19,7 +19,7 @@ class Collection(object):
 
     def on_post(self, req, resp, retrieval_id):
         no = req.get_json('no')
-        select = req.get_json('select')
+        selected = req.get_json('selected')
         retrieval = Retrieval.get_by_id(retrieval_id)
         if no >= retrieval.max_iteration:
             return
@@ -30,12 +30,16 @@ class Collection(object):
         else:
             last_iteration = Iteration.get(retrieval=retrieval, no=no-1)
             states = last_iteration.states
-        iteration, created = Iteration.get_or_create(
-            retrieval=retrieval, no=no, states=states)
         if retrieval.strategy == 'random':
-            result = get_next_iteration_random(
-                no, select, states, retrieval.max_iteration_faces)
-            resp.json = result
+            results = get_next_iteration_random(
+                no, selected, states, retrieval.max_iteration_faces)
+            resp.json = results
+        iteration = Iteration.get_or_create(
+            retrieval=retrieval, no=no)[0]
+        iteration.states = states
+        iteration.results = results
+        iteration.selected = selected
+        iteration.save()
 
 
 class Item(object):

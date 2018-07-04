@@ -8,7 +8,7 @@ import uuid
 import falcon
 import falcon_jsonify
 
-from . import const, iterations, libraries, photos, retrieves
+from . import const, iterations, libraries, photos, retrieves,distances
 from .models import Distance, Library, User, create_tables
 from .utils import db
 
@@ -96,6 +96,8 @@ class ImageStore(object):
 image_store = ImageStore(const.LIBRARY_PATH)
 api.add_route('/libraries', libraries.Collection())
 api.add_route('/libraries/{name}', libraries.Item())
+api.add_route('/distances', distances.Collection())
+api.add_route('/distances/{id}', distances.Item())
 api.add_route('/photos/{library}', photos.Collection())
 api.add_route('/photos/{library}/{name}', photos.Item(image_store))
 api.add_route('/retrieves', retrieves.Collection())

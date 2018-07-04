@@ -10,7 +10,6 @@ def get_next_iteration_random(no, selected_photo, states, max_iteration_faces=16
             state['shown'] = 0
     if no != 0:
         states[selected_photo]['selected'] = True
-    print(states)
     filtered_photos = filter(
         lambda x: not states[x]['selected'], photos)
     samples = random.sample(list(filtered_photos), max_iteration_faces)

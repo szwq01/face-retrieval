@@ -73,7 +73,7 @@ class Retrieval(BaseModel):
 class Iteration(BaseModel):
     retrieval = ForeignKeyField(Retrieval, backref='iterations')
     no = IntegerField()
-    states = BinaryJSONField()
+    states = BinaryJSONField(null=True)
     results = ArrayField(CharField,default=lambda :[])
     selected = CharField(null=True)
     class Meta:

@@ -73,10 +73,10 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },
     '/retrieval/option': {
-      component: dynamicWrapper(app, ['chart'], () => import('../routes/Retrieval/Option')),
+      component: dynamicWrapper(app, ['chart','retrieval'], () => import('../routes/Retrieval/Option')),
     },
     '/retrieval/start': {
-      component: dynamicWrapper(app, ['chart'], () => import('../routes/Retrieval/Start')),
+      component: dynamicWrapper(app, ['chart','retrieval'], () => import('../routes/Retrieval/Start')),
     },
     '/dashboard/analysis': {
       component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
