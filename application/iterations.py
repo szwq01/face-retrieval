@@ -1,8 +1,9 @@
 import falcon
 import json
 from .models import Retrieval, Iteration
-from .algorithms import get_next_iteration_random
-
+from .algorithms import get_next_iteration_random,get_next_iteration_similarity
+from . import const,utils
+import os
 
 class Collection(object):
 
@@ -21,8 +22,6 @@ class Collection(object):
         no = req.get_json('no')
         selected = req.get_json('selected')
         retrieval = Retrieval.get_by_id(retrieval_id)
-        if no >= retrieval.max_iteration:
-            return
         if no == 0:
             states = {
                 photo: {} for photo in retrieval.photos
@@ -34,12 +33,22 @@ class Collection(object):
             results = get_next_iteration_random(
                 no, selected, states, retrieval.max_iteration_faces)
             resp.json = results
+        elif retrieval.strategy == 'similarity':
+            library = retrieval.library
+            distance = retrieval.distance
+            distance_path = utils.get_distance_path(library.name,distance.name)
+            results = get_next_iteration_similarity(
+                no, selected, states, retrieval.max_iteration_faces, distance_path
+            )
+            resp.json = results
         iteration = Iteration.get_or_create(
             retrieval=retrieval, no=no)[0]
         iteration.states = states
         iteration.results = results
         iteration.selected = selected
         iteration.save()
+        retrieval.iterator_pointer = no
+        retrieval.save()
 
 
 class Item(object):

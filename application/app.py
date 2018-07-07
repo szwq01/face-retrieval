@@ -10,7 +10,7 @@ import falcon_jsonify
 
 from . import const, iterations, libraries, photos, retrieves,distances
 from .models import Distance, Library, User, create_tables
-from .utils import db
+from .utils import db,get_distance_path,get_photo_path
 
 
 def refresh_libs():
@@ -20,11 +20,20 @@ def refresh_libs():
         library, created = Library.get_or_create(name=lib_name)
         photos = os.listdir(os.path.join(lib_dir, lib_name, 'photos'))
         library.count = len(photos)
+        library.photos = photos
         library.save()
         distances = os.listdir(os.path.join(lib_dir, lib_name, 'distances'))
         for distance_name in distances:
             distance, created = Distance.get_or_create(
                 name=distance_name, library=library)
+            fp = get_distance_path(lib_name,distance_name)
+            with open(fp,'r') as f:
+                photos_list = f.readline().split()
+            photos_map = {}
+            for(index,value) in enumerate(photos_list):
+                photos_map[value] = index
+            distance.photos_map = photos_map
+            distance.save()
 
 
 def init_system():

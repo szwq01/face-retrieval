@@ -1,99 +1,183 @@
+<p align="center">
+  <img width="320" src="https://wpimg.wallstcn.com/ecc53a42-d79b-42e2-8852-5126b810a4c8.svg">
+</p>
+
+<p align="center">
+  <a href="https://github.com/vuejs/vue">
+    <img src="https://img.shields.io/badge/vue-2.5.10-brightgreen.svg" alt="vue">
+  </a>
+  <a href="https://github.com/ElemeFE/element">
+    <img src="https://img.shields.io/badge/element--ui-2.3.2-brightgreen.svg" alt="element-ui">
+  </a>
+  <a href="https://travis-ci.org/PanJiaChen/vue-element-admin" rel="nofollow">
+    <img src="https://travis-ci.org/PanJiaChen/vue-element-admin.svg?branch=master" alt="Build Status">
+  </a>
+  <a href="https://github.com/PanJiaChen/vue-element-admin/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/mashape/apistatus.svg" alt="license">
+  </a>
+  <a href="https://github.com/PanJiaChen/vue-element-admin/releases">
+    <img src="https://img.shields.io/github/release/PanJiaChen/vue-element-admin.svg" alt="GitHub release">
+  </a>
+</p>
+
 English | [简体中文](./README.zh-CN.md)
 
-# Ant Design Pro
+## Introduction
 
-[![](https://img.shields.io/travis/ant-design/ant-design-pro/master.svg?style=flat-square)](https://travis-ci.org/ant-design/ant-design-pro)
-[![Build status](https://ci.appveyor.com/api/projects/status/67fxu2by3ibvqtat/branch/master?svg=true)](https://ci.appveyor.com/project/afc163/ant-design-pro/branch/master)
-[![Dependencies](https://img.shields.io/david/ant-design/ant-design-pro.svg)](https://david-dm.org/ant-design/ant-design-pro)
-[![DevDependencies](https://img.shields.io/david/dev/ant-design/ant-design-pro.svg)](https://david-dm.org/ant-design/ant-design-pro#info=devDependencies&view=list)
-[![Gitter](https://badges.gitter.im/ant-design/ant-design-pro.svg)](https://gitter.im/ant-design/ant-design-pro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[vue-element-admin](http://panjiachen.github.io/vue-element-admin) is a front-end management background integration solution. It based on [vue](https://github.com/vuejs/vue) and use the UI Toolkit [element](https://github.com/ElemeFE/element).
 
-An out-of-box UI solution for enterprise applications as a React boilerplate.
+It is a magical vue admin based on the newest development stack of vue, built-in i18n solution, typical templates for enterprise applications, lots of awesome features. It helps you build a large complex Single-Page Applications. I believe whatever your needs are, this project will help you.
 
-![](https://gw.alipayobjects.com/zos/rmsportal/xEdBqwSzvoSapmnSnYjU.png)
+- [Preview](http://panjiachen.github.io/vue-element-admin)
 
-- Preview: http://preview.pro.ant.design
-- Home Page: http://pro.ant.design
-- Documentation: http://pro.ant.design/docs/getting-started
-- ChangeLog: http://pro.ant.design/docs/changelog
-- FAQ: http://pro.ant.design/docs/faq
-- Mirror Site in China: http://ant-design-pro.gitee.io
+- [Documentation](https://panjiachen.github.io/vue-element-admin-site/)
 
-## Translation Recruitment :loudspeaker:
+- [Gitter](https://gitter.im/vue-element-admin/discuss)
 
-We need your help: https://github.com/ant-design/ant-design-pro/issues/120
+- [Wiki](https://github.com/PanJiaChen/vue-element-admin/wiki)
+
+- [Donate](https://panjiachen.github.io/vue-element-admin-site/donate/)
+
+**This project is positioned as a background integration solution and is not suitable for secondary development as a basic template.**
+
+ - Base template recommends using: [vueAdmin-template](https://github.com/PanJiaChen/vueAdmin-template)  
+ - Desktop: [electron-vue-admin](https://github.com/PanJiaChen/electron-vue-admin)
+
+## Preparation
+
+You need to install [node](http://nodejs.org/) and [git](https://git-scm.com/) locally. The project is based on [ES2015+](http://es6.ruanyifeng.com/), [vue](https://cn.vuejs.org/index.html), [vuex](https://vuex.vuejs.org/zh-cn/), [vue-router](https://router.vuejs.org/zh-cn/), [axios](https://github.com/axios/axios) and [element-ui](https://github.com/ElemeFE/element), all request data is simulated using [Mock.js](https://github.com/nuysoft/Mock).
+ Understanding and learning this knowledge in advance will greatly help the use of this project.
+
+ **This project does not support low version browsers (e.g. IE). Please add polyfill yourself if you need them.**
+
+ **Note: This project uses element-ui@2.3.0+ version, so the minimum compatible vue@2.5.0+**
+
+ <p align="center">
+  <img width="900" src="https://wpimg.wallstcn.com/a5894c1b-f6af-456e-82df-1151da0839bf.png">
+</p>
 
 ## Features
-
-- :gem: **Neat Design**: Follow [Ant Design specification](http://ant.design/)
-- :triangular_ruler: **Common Templates**: Typical templates for enterprise applications
-- :rocket: **State of The Art Development**: Newest development stack of React/dva/antd
-- :iphone: **Responsive**: Designed for varies of screen size
-- :art: **Theming**: Customizable theme with simple config
-- :globe_with_meridians: **International**: Built-in i18n solution
-- :gear: **Best Practice**: Solid workflow make your code health
-- :1234: **Mock development**: Easy to use mock development solution
-- :white_check_mark: **UI Test**: Fly safely with unit test and e2e test
-
-## Templates
-
 ```
-- Dashboard
-  - Analytic
-  - Monitor
-  - Workspace
-- Form
-  - Basic Form
-  - Step Form
-  - Advanced From
-- List
-  - Standard Table
-  - Standard List
-  - Card List
-  - Search List (Project/Applications/Article)
-- Profile
-  - Simple Profile
-  - Advanced Profile
-- Result
-  - Success
-  - Failed
-- Exception
-  - 403
+- Login / Logout
+
+- Permission Authentication
+  - Page permission
+  - Directive permission
+  - Two-step login
+
+- Multi-environment build
+  - dev sit stage prod
+
+- Global Features
+  - I18n
+  - Multiple dynamic themes
+  - Dynamic sidebar (supports multi-level routing)
+  - Dynamic breadcrumb
+  - Tags-view(Tab page Support right-click operation)
+  - Svg Sprite
+  - Mock data
+  - Screenfull
+  - Responsive Sidebar
+
+- Editor
+  - Rich Text Editor
+  - Markdown Editor
+  - JSON Editor
+
+- Excel
+  - Export Excel
+  - Export zip
+  - Upload Excel
+  - Visualization Excel
+
+- Table
+  - Dynamic Table
+  - Drag And Drop Table
+  - Tree Table
+  - Inline Edit Table
+
+- Error Page
+  - 401
   - 404
-  - 500
-- User
-  - Login
-  - Register
-  - Register Result
+
+- Components
+  - Avatar Upload
+  - Back To Top
+  - Drag Dialog
+  - Drag Kanban
+  - Drag List
+  - SplitPane
+  - Dropzone
+  - Sticky
+  - CountTo
+
+- Advanced Example
+- Error Log
+- Dashboard
+- Guide Page
+- Echarts
+- Clipboard
+- Markdown to html
 ```
 
-## Usage
+## Getting started
 
 ```bash
-$ git clone https://github.com/ant-design/ant-design-pro.git --depth=1
-$ cd ant-design-pro
-$ npm install
-$ npm start         # visit http://localhost:8000
+# clone the project
+git clone https://github.com/PanJiaChen/vue-element-admin.git
+
+# install dependency
+npm install
+
+# develop
+npm run dev
 ```
 
-Or you can use the command tool: [ant-design-pro-cli](https://github.com/ant-design/ant-design-pro-cli)
+This will automatically open http://localhost:9527.
 
+## Build
 ```bash
-$ npm install ant-design-pro-cli -g
-$ mkdir pro-demo && cd pro-demo
-$ pro new
+# build for test environment
+npm run build:sit
+
+# build for production environment
+npm run build:prod
 ```
 
-More instruction at [documentation](http://pro.ant.design/docs/getting-started).
+## Advanced
+```bash
+# --report to build with bundle size analytics
+npm run build:prod --report
 
-## Compatibility
+# --preview to start a server in local to preview
+npm run build:prod --preview
 
-Modern browsers and IE11.
+# lint code
+npm run lint
 
-## Contributing
+# auto fix
+npm run lint -- --fix
+```
 
-Any Contribution of following ways will be welcome:
+Refer to [Documentation](https://panjiachen.github.io/vue-element-admin-site/guide/essentials/deploy.html) for more information
 
-- Use Ant Design Pro in your daily work.
-- Submit [issue](http://github.com/ant-design/ant-design-pro/issues) to report bug or ask questions.
-- Propose [pull request](http://github.com/ant-design/ant-design-pro/pulls) to improve our code.
+## Changelog
+Detailed changes for each release are documented in the [release notes](https://github.com/PanJiaChen/vue-element-admin/releases).
+
+## Online Demo
+[Preview](http://panjiachen.github.io/vue-element-admin)
+
+## Donate
+If you find this project useful, you can buy author a glass of juice :tropical_drink:
+
+![donate](https://wpimg.wallstcn.com/bd273f0d-83a0-4ef2-92e1-9ac8ed3746b9.png)
+
+[Paypal Me](https://www.paypal.me/panfree23)
+
+[Buy me a coffee](https://www.buymeacoffee.com/Pan)
+
+## License
+
+[MIT](https://github.com/PanJiaChen/vue-element-admin/blob/master/LICENSE)
+
+Copyright (c) 2017-present PanJiaChen

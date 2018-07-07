@@ -20,15 +20,28 @@ class User(BaseModel):
     username = CharField(unique=True)
     password = CharField()
     is_admin = BooleanField(default=False)
-
+    def to_json(self):
+        return {
+            'userName': self.username,
+            'isAdmin': self.is_admin
+        }
 
 class Library(BaseModel):
     name = CharField(unique=True)
     detail = TextField(default='')
     is_available = BooleanField(default=True)
     hash = CharField(null=True)
+    photos = ArrayField(CharField,null=True)
     count = IntegerField(default=0)
 
+    def to_json(self):
+        return {
+            'name':self.name,
+            'detail':self.detail,
+            'isAvailable': self.is_available,
+            'hash':self.hash,
+            'count':self.count
+        }
     # def get_photo(self, filename):
     #     pass
 
@@ -51,8 +64,15 @@ class Distance(BaseModel):
     detail = TextField(default='')
     hash = CharField(null=True)
     library = ForeignKeyField(Library, backref='distances')
+    photos_map = JSONField(null=True)
     is_available = BooleanField(default=True)
-
+    def to_json(self):
+        return {
+            'name': self.name,
+            'detail': self.detail,
+            'hash': self.hash,
+            'libraryID': self.library.id
+        }
 
 class Retrieval(BaseModel):
     user = ForeignKeyField(User, backref='retrieves')
@@ -70,6 +90,20 @@ class Retrieval(BaseModel):
         if len(self.rounds) >= self.max_round:
             return []
 
+    def to_json(self):
+        return {
+            'user': self.user.to_json(),
+            'remark': self.remark,
+            'library': self.library.to_json(),
+            'strategy': self.strategy,
+            'maxIteration': self.max_iteration,
+            'status': self.status,
+            'maxIterationFaces': self.max_iteration_faces,
+            'iteratorPointer': self.iterator_pointer,
+            'iterations': [iteration.to_json() for iteration in self.iterations],
+            'distance': self.distance.to_json()
+        }
+
 class Iteration(BaseModel):
     retrieval = ForeignKeyField(Retrieval, backref='iterations')
     no = IntegerField()
@@ -78,7 +112,13 @@ class Iteration(BaseModel):
     selected = CharField(null=True)
     class Meta:
         primary_key = CompositeKey('retrieval', 'no')
-
+    def to_json(self):
+        return {
+            'retrievalID': self.retrieval.id,
+            'no':self.no,
+            'results': self.results,
+            'selected': self.selected
+        }
 
 def create_tables():
     with db:

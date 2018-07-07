@@ -1,101 +1,72 @@
-import fetch from 'dva/fetch';
-import { notification } from 'antd';
-import { routerRedux } from 'dva/router';
-import store from '../index';
+import axios from 'axios'
+import { Message } from 'element-ui'
+import store from '@/store'
+import { getToken } from '@/utils/auth'
 
-const codeMessage = {
-  200: '服务器成功返回请求的数据。',
-  201: '新建或修改数据成功。',
-  202: '一个请求已经进入后台排队（异步任务）。',
-  204: '删除数据成功。',
-  400: '发出的请求有错误，服务器没有进行新建或修改数据的操作。',
-  401: '用户没有权限（令牌、用户名、密码错误）。',
-  403: '用户得到授权，但是访问是被禁止的。',
-  404: '发出的请求针对的是不存在的记录，服务器没有进行操作。',
-  406: '请求的格式不可得。',
-  410: '请求的资源被永久删除，且不会再得到的。',
-  422: '当创建一个对象时，发生一个验证错误。',
-  500: '服务器发生错误，请检查服务器。',
-  502: '网关错误。',
-  503: '服务不可用，服务器暂时过载或维护。',
-  504: '网关超时。',
-};
-function checkStatus(response) {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
+// create an axios instance
+const service = axios.create({
+  baseURL: process.env.BASE_API, // api的base_url
+  timeout: 5000 // request timeout
+})
+
+// request interceptor
+service.interceptors.request.use(config => {
+  // Do something before request is sent
+  if (store.getters.token) {
+    // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
+    config.headers['X-Token'] = getToken()
   }
-  const errortext = codeMessage[response.status] || response.statusText;
-  notification.error({
-    message: `请求错误 ${response.status}: ${response.url}`,
-    description: errortext,
-  });
-  const error = new Error(errortext);
-  error.name = response.status;
-  error.response = response;
-  throw error;
-}
+  return config
+}, error => {
+  // Do something with request error
+  console.log(error) // for debug
+  Promise.reject(error)
+})
 
-/**
- * Requests a URL, returning a promise.
- *
- * @param  {string} url       The URL we want to request
- * @param  {object} [options] The options we want to pass to "fetch"
- * @return {object}           An object containing either "data" or "err"
- */
-export default function request(url, options) {
-  url = `http://localhost:8000/${url.slice(4)}`
-  const defaultOptions = {
-    credentials: 'include',
-  };
-  const newOptions = { ...defaultOptions, ...options };
-  if (
-    newOptions.method === 'POST' ||
-    newOptions.method === 'PUT' ||
-    newOptions.method === 'DELETE'
-  ) {
-    if (!(newOptions.body instanceof FormData)) {
-      newOptions.headers = {
-        Accept: 'application/json',
-        'Content-Type': 'application/json; charset=utf-8',
-        ...newOptions.headers,
-      };
-      newOptions.body = JSON.stringify(newOptions.body);
-    } else {
-      // newOptions.body is FormData
-      newOptions.headers = {
-        Accept: 'application/json',
-        ...newOptions.headers,
-      };
-    }
-  }
-
-  return fetch(url, newOptions)
-    .then(checkStatus)
-    .then(response => {
-      if (newOptions.method === 'DELETE' || response.status === 204) {
-        return response.text();
-      }
-      return response.json();
+// respone interceptor
+service.interceptors.response.use(
+  response => response,
+  /**
+   * 下面的注释为通过在response里，自定义code来标示请求状态
+   * 当code返回如下情况则说明权限有问题，登出并返回到登录页
+   * 如想通过xmlhttprequest来状态码标识 逻辑可写在下面error中
+   * 以下代码均为样例，请结合自生需求加以修改，若不需要，则可删除
+   */
+  // response => {
+  //   const res = response.data
+  //   if (res.code !== 20000) {
+  //     Message({
+  //       message: res.message,
+  //       type: 'error',
+  //       duration: 5 * 1000
+  //     })
+  //     // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;
+  //     if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
+  //       // 请自行在引入 MessageBox
+  //       // import { Message, MessageBox } from 'element-ui'
+  //       MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录', '确定登出', {
+  //         confirmButtonText: '重新登录',
+  //         cancelButtonText: '取消',
+  //         type: 'warning'
+  //       }).then(() => {
+  //         store.dispatch('FedLogOut').then(() => {
+  //           location.reload() // 为了重新实例化vue-router对象 避免bug
+  //         })
+  //       })
+  //     }
+  //     return Promise.reject('error')
+  //   } else {
+  //     return response.data
+  //   }
+  // },
+  error => {
+    console.log('err' + error) // for debug
+    Message({
+      message: error.message,
+      type: 'error',
+      duration: 5 * 1000
     })
-    .catch(e => {
-      const { dispatch } = store;
-      const status = e.name;
-      if (status === 401) {
-        dispatch({
-          type: 'login/logout',
-        });
-        return;
-      }
-      if (status === 403) {
-        dispatch(routerRedux.push('/exception/403'));
-        return;
-      }
-      if (status <= 504 && status >= 500) {
-        dispatch(routerRedux.push('/exception/500'));
-        return;
-      }
-      if (status >= 404 && status < 422) {
-        dispatch(routerRedux.push('/exception/404'));
-      }
-    });
-}
+    return Promise.reject(error)
+  })
+
+export default service
